@@ -1,3 +1,19 @@
+const RenderDOM = (function () {
+  const allButtons = document.querySelectorAll(".cell");
+  const resetDOM = () => {
+    allButtons.forEach((cell) => {
+      cell.textContent = "";
+    });
+  };
+  return { resetDOM };
+})();
+
+const resetButton = document.querySelector("#reset");
+
+resetButton.addEventListener("click", () => {
+  RenderDOM.resetDOM();
+});
+
 const GameState = (function () {
   const start = () => {
     const player1 = GameState.gamePlayerCreate();
