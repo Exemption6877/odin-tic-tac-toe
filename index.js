@@ -54,6 +54,9 @@ const GameState = (function () {
     moveNumber = 0;
     gameOver = false;
 
+    player1.symbol = "X";
+    player2.symbol = "O";
+
     PlayerLogic.resetGameboard();
     document.querySelectorAll(".cell").forEach((button) => {
       button.textContent = "";
@@ -66,7 +69,8 @@ const GameState = (function () {
     if (gameOver) return;
 
     const move = parseInt(event.target.value);
-    event.target.textContent = current.name === "1" ? "X" : "O";
+
+    event.target.textContent = current.symbol;
     event.target.disabled = true;
 
     PlayerLogic.makeMove(current, move);
