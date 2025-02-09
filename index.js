@@ -18,7 +18,7 @@ const PlayerLogic = (function () {
     return Gameboard;
   };
   const makeMove = (player) => {
-    const move = prompt(`${player.name} turn: `);
+    const move = parseInt(prompt(`${player.name} turn: `));
     Gameboard.push({ player: player.name, move });
   };
   const logGameboard = () => console.log(Gameboard);
@@ -35,10 +35,34 @@ const GameLogic = (function () {
       (player) => player.player === user
     );
 
-    return filtered;
+    return filtered.map((value) => value.move);
   };
 
-  return { filterPlayerMoves };
+  const winCheck = (player) => {
+    const combinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+    ];
+
+    const playerMoves = GameLogic.filterPlayerMoves(player);
+    for (let i = 0; i < combinations.length; i++) {
+      const combo = combinations[i];
+
+      let winStatus = true;
+      for (let j = 0; j < combo.length; j++) {
+        if (!playerMoves.includes(combo[j])) {
+          winStatus = false;
+          break;
+        }
+      }
+      if (winStatus) {
+        return true;
+      }
+    }
+    return false;
+  };
+  return { filterPlayerMoves, winCheck };
 })();
 
 // i will do IIFE with resetGame and endGame funcs.
@@ -47,16 +71,19 @@ function gameStart() {
   const toggleTurn = PlayerLogic.playerTurn(player1, player2);
   let moveNumber = 1;
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 9; i++) {
     PlayerLogic.makeMove(current);
     // PlayerLogic.logGameboard();
     current = toggleTurn();
 
     // user filters
     console.log(GameLogic.filterPlayerMoves(player1.name));
+    console.log(GameLogic.winCheck(player1.name));
     console.log(GameLogic.filterPlayerMoves(player2.name));
     moveNumber++;
   }
+
+  console.log(GameLogic.winCheck(player2.name));
 }
 
 gameStart();
