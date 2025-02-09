@@ -41,6 +41,7 @@ const GameLogic = (function () {
   return { filterPlayerMoves };
 })();
 
+// i will do IIFE with resetGame and endGame funcs.
 function gameStart() {
   let current = player1;
   const toggleTurn = PlayerLogic.playerTurn(player1, player2);
@@ -50,6 +51,8 @@ function gameStart() {
     PlayerLogic.makeMove(current);
     // PlayerLogic.logGameboard();
     current = toggleTurn();
+
+    // user filters
     console.log(GameLogic.filterPlayerMoves(player1.name));
     console.log(GameLogic.filterPlayerMoves(player2.name));
     moveNumber++;
