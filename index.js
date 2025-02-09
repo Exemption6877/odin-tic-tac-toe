@@ -1,23 +1,38 @@
 const RenderDOM = (function () {
   const allButtons = document.querySelectorAll(".cell");
-  const resetDOM = () => {
+  const reset = () => {
     allButtons.forEach((cell) => {
       cell.textContent = "";
     });
   };
-  return { resetDOM };
+  const start = () => {
+    //Add some html flavor
+    RenderDOM.reset();
+    GameState.start();
+  };
+
+  const move = (move) => {
+    allButtons.addEventListener("click", (button) => {
+      console.log(button.value);
+    });
+  };
+  return { reset, start };
 })();
 
 const resetButton = document.querySelector("#reset");
-
+const startButton = document.querySelector("#start");
 resetButton.addEventListener("click", () => {
-  RenderDOM.resetDOM();
+  RenderDOM.reset();
+});
+
+startButton.addEventListener("click", () => {
+  RenderDOM.start();
 });
 
 const GameState = (function () {
   const start = () => {
-    const player1 = GameState.gamePlayerCreate();
-    const player2 = GameState.gamePlayerCreate();
+    const player1 = GameState.gamePlayerCreate("1");
+    const player2 = GameState.gamePlayerCreate("2");
 
     PlayerLogic.resetGameboard();
 
@@ -46,7 +61,8 @@ const GameState = (function () {
       current = toggleTurn();
     } while (true);
   };
-  const gamePlayerCreate = () => createPlayer(prompt("Player name: "));
+  const gamePlayerCreate = (number) =>
+    createPlayer(prompt(`Player ${number} name: `));
   const end = (player) => console.log(`Player ${player} has won!`);
 
   return { start, end, gamePlayerCreate };
