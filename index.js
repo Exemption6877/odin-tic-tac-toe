@@ -1,3 +1,10 @@
+const GameState = (function () {
+  const ending = (player) => console.log(`Player ${player} has won!`);
+  const gamePlayerCreate = () => createPlayer(prompt("Player name: "));
+
+  return { ending, gamePlayerCreate };
+})();
+
 function createPlayer(name) {
   return { name };
 }
@@ -25,8 +32,8 @@ const PlayerLogic = (function () {
   return { logGameboard, playerTurn, makeMove, getGameboard };
 })();
 
-const player1 = createPlayer("Knight");
-const player2 = createPlayer("Bruh");
+const player1 = GameState.gamePlayerCreate();
+const player2 = GameState.gamePlayerCreate();
 
 // Defining win conditions here.
 const GameLogic = (function () {
@@ -40,9 +47,17 @@ const GameLogic = (function () {
 
   const winCheck = (player) => {
     const combinations = [
+      // row
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
+      // column
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      // diagonal
+      [0, 4, 8],
+      [2, 4, 6],
     ];
 
     const playerMoves = GameLogic.filterPlayerMoves(player);
@@ -87,3 +102,5 @@ function gameStart() {
 }
 
 gameStart();
+
+const RenderGame = function () {};
