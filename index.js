@@ -1,18 +1,45 @@
 const GameState = (function () {
-  const gamePlayerCreate = () => createPlayer(prompt("Player name: "));
-  const ending = (player) => console.log(`Player ${player} has won!`);
+  const start = () => {
+    PlayerLogic.resetGameboard();
+    let current = player1;
+    const toggleTurn = PlayerLogic.playerTurn(player1, player2);
 
-  return { ending, gamePlayerCreate };
+    let moveNumber = 0;
+    let gameOver = false;
+    do {
+      if (gameOver) break;
+
+      PlayerLogic.makeMove(current);
+      moveNumber++;
+
+      if (GameLogic.winCheck(current.name)) {
+        GameState.end(current.name);
+        gameOver = true;
+        break;
+      }
+
+      if (moveNumber === 9) {
+        console.log("It's a draw!");
+        gameOver = true;
+        break;
+      }
+      current = toggleTurn();
+    } while (true);
+  };
+  const gamePlayerCreate = () => createPlayer(prompt("Player name: "));
+  const end = (player) => console.log(`Player ${player} has won!`);
+
+  return { start, end, gamePlayerCreate };
 })();
 
 function createPlayer(name) {
   return { name };
 }
-
-// Defining player actions.
-// I will NEED to check for the same inputs.
 const PlayerLogic = (function () {
   const Gameboard = [];
+  const resetGameboard = () => {
+    Gameboard.length = 0;
+  };
   const playerTurn = (player1, player2) => {
     let current = player1;
     return function () {
@@ -24,7 +51,7 @@ const PlayerLogic = (function () {
   const getGameboard = () => {
     return Gameboard;
   };
-  
+
   const makeMove = (player) => {
     let move;
     do {
@@ -33,7 +60,7 @@ const PlayerLogic = (function () {
     Gameboard.push({ player: player.name, move });
   };
   const logGameboard = () => console.log(Gameboard);
-  return { logGameboard, playerTurn, makeMove, getGameboard };
+  return { resetGameboard, logGameboard, playerTurn, makeMove, getGameboard };
 })();
 
 const player1 = GameState.gamePlayerCreate();
@@ -84,27 +111,6 @@ const GameLogic = (function () {
   return { filterPlayerMoves, winCheck };
 })();
 
-// i will do IIFE with resetGame and endGame funcs.
-function gameStart() {
-  let current = player1;
-  const toggleTurn = PlayerLogic.playerTurn(player1, player2);
-  let moveNumber = 1;
+// render factory
 
-  for (let i = 0; i < 9; i++) {
-    PlayerLogic.makeMove(current);
-    // PlayerLogic.logGameboard();
-    current = toggleTurn();
-
-    // user filters
-    console.log(GameLogic.filterPlayerMoves(player1.name));
-    console.log(GameLogic.winCheck(player1.name));
-    console.log(GameLogic.filterPlayerMoves(player2.name));
-    moveNumber++;
-  }
-
-  console.log(GameLogic.winCheck(player2.name));
-}
-
-gameStart();
-
-const RenderGame = function () {};
+GameState.start();
