@@ -2,7 +2,9 @@ function createPlayer(name) {
   return { name };
 }
 
-const gameLogic = (function () {
+// Defining player actions.
+// I will NEED to check for the same inputs.
+const PlayerLogic = (function () {
   const Gameboard = [];
   const playerTurn = (player1, player2) => {
     let current = player1;
@@ -11,26 +13,45 @@ const gameLogic = (function () {
       return current;
     };
   };
+
+  const getGameboard = () => {
+    return Gameboard;
+  };
   const makeMove = (player) => {
     const move = prompt(`${player.name} turn: `);
     Gameboard.push({ player: player.name, move });
   };
   const logGameboard = () => console.log(Gameboard);
-  return { logGameboard, playerTurn, makeMove };
+  return { logGameboard, playerTurn, makeMove, getGameboard };
 })();
 
 const player1 = createPlayer("Knight");
 const player2 = createPlayer("Bruh");
 
+// Defining win conditions here.
+const GameLogic = (function () {
+  const filterPlayerMoves = (user) => {
+    const filtered = PlayerLogic.getGameboard().filter(
+      (player) => player.player === user
+    );
+
+    return filtered;
+  };
+
+  return { filterPlayerMoves };
+})();
+
 function gameStart() {
   let current = player1;
-  const toggleTurn = gameLogic.playerTurn(player1, player2);
+  const toggleTurn = PlayerLogic.playerTurn(player1, player2);
   let moveNumber = 1;
 
   for (let i = 0; i < 4; i++) {
-    gameLogic.makeMove(current);
-    gameLogic.logGameboard();
+    PlayerLogic.makeMove(current);
+    // PlayerLogic.logGameboard();
     current = toggleTurn();
+    console.log(GameLogic.filterPlayerMoves(player1.name));
+    console.log(GameLogic.filterPlayerMoves(player2.name));
     moveNumber++;
   }
 }
