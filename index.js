@@ -114,4 +114,4 @@ const GameLogic = (function () {
 
 // render factory
 
-GameState.start();
+// GameState.start();
