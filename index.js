@@ -1,6 +1,6 @@
 const GameState = (function () {
-  const ending = (player) => console.log(`Player ${player} has won!`);
   const gamePlayerCreate = () => createPlayer(prompt("Player name: "));
+  const ending = (player) => console.log(`Player ${player} has won!`);
 
   return { ending, gamePlayerCreate };
 })();
@@ -24,8 +24,12 @@ const PlayerLogic = (function () {
   const getGameboard = () => {
     return Gameboard;
   };
+  
   const makeMove = (player) => {
-    const move = parseInt(prompt(`${player.name} turn: `));
+    let move;
+    do {
+      move = parseInt(prompt(`${player.name} turn: `));
+    } while (Gameboard.some((element) => element.move === move));
     Gameboard.push({ player: player.name, move });
   };
   const logGameboard = () => console.log(Gameboard);
