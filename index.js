@@ -1,6 +1,10 @@
 const GameState = (function () {
   const start = () => {
+    const player1 = GameState.gamePlayerCreate();
+    const player2 = GameState.gamePlayerCreate();
+
     PlayerLogic.resetGameboard();
+
     let current = player1;
     const toggleTurn = PlayerLogic.playerTurn(player1, player2);
 
@@ -62,9 +66,6 @@ const PlayerLogic = (function () {
   const logGameboard = () => console.log(Gameboard);
   return { resetGameboard, logGameboard, playerTurn, makeMove, getGameboard };
 })();
-
-const player1 = GameState.gamePlayerCreate();
-const player2 = GameState.gamePlayerCreate();
 
 // Defining win conditions here.
 const GameLogic = (function () {
