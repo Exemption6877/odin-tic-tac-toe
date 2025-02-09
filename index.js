@@ -1,8 +1,12 @@
 const RenderDOM = (function () {
   const allButtons = document.querySelectorAll(".cell");
+  const topContainer = document.querySelector(".top-container");
   const reset = () => {
+    if (topContainer.childElementCount > 0) {
+      topContainer.removeChild(document.querySelector(".winner"));
+    }
     allButtons.forEach((cell) => {
-      cell.textContent = "";
+      cell.textContent = " ";
     });
   };
   const start = () => {
@@ -11,12 +15,19 @@ const RenderDOM = (function () {
     GameState.start();
   };
 
-  const move = (move) => {
-    allButtons.addEventListener("click", (button) => {
-      console.log(button.value);
-    });
+  const winner = (player) => {
+    const winOutput = document.createElement("h1");
+    winOutput.classList.add("winner");
+
+    if (player == "Draw!") {
+      winOutput.textContent = `${player}`;
+    } else {
+      winOutput.textContent = `${player} wins!`;
+    }
+    topContainer.appendChild(winOutput);
   };
-  return { reset, start };
+
+  return { reset, start, winner };
 })();
 
 const resetButton = document.querySelector("#reset");
@@ -30,42 +41,58 @@ startButton.addEventListener("click", () => {
 });
 
 const GameState = (function () {
+  let current;
+  let player1;
+  let player2;
+  let moveNumber;
+  let gameOver;
+
   const start = () => {
-    const player1 = GameState.gamePlayerCreate("1");
-    const player2 = GameState.gamePlayerCreate("2");
+    player1 = gamePlayerCreate("1");
+    player2 = gamePlayerCreate("2");
+    current = player1;
+    moveNumber = 0;
+    gameOver = false;
 
     PlayerLogic.resetGameboard();
-
-    let current = player1;
-    const toggleTurn = PlayerLogic.playerTurn(player1, player2);
-
-    let moveNumber = 0;
-    let gameOver = false;
-    do {
-      if (gameOver) break;
-
-      PlayerLogic.makeMove(current);
-      moveNumber++;
-
-      if (GameLogic.winCheck(current.name)) {
-        GameState.end(current.name);
-        gameOver = true;
-        break;
-      }
-
-      if (moveNumber === 9) {
-        console.log("It's a draw!");
-        gameOver = true;
-        break;
-      }
-      current = toggleTurn();
-    } while (true);
+    document.querySelectorAll(".cell").forEach((button) => {
+      button.textContent = "";
+      button.disabled = false;
+      button.addEventListener("click", handleMove, { once: true });
+    });
   };
-  const gamePlayerCreate = (number) =>
-    createPlayer(prompt(`Player ${number} name: `));
-  const end = (player) => console.log(`Player ${player} has won!`);
 
-  return { start, end, gamePlayerCreate };
+  const handleMove = (event) => {
+    if (gameOver) return;
+
+    const move = parseInt(event.target.value);
+    event.target.textContent = current.name === "1" ? "X" : "O";
+    event.target.disabled = true;
+
+    PlayerLogic.makeMove(current, move);
+    moveNumber++;
+
+    if (GameLogic.winCheck(current.name)) {
+      console.log(`Player ${current.name} wins!`);
+      RenderDOM.winner(current.name);
+      gameOver = true;
+      return;
+    }
+
+    if (moveNumber === 9) {
+      console.log("It's a draw!");
+      RenderDOM.winner("Draw!");
+      gameOver = true;
+      return;
+    }
+
+    current = current === player1 ? player2 : player1;
+  };
+
+  const gamePlayerCreate = (number) =>
+    createPlayer(prompt(`Player ${number} name:`));
+
+  return { start };
 })();
 
 function createPlayer(name) {
@@ -88,12 +115,10 @@ const PlayerLogic = (function () {
     return Gameboard;
   };
 
-  const makeMove = (player) => {
-    let move;
-    do {
-      move = parseInt(prompt(`${player.name} turn: `));
-    } while (Gameboard.some((element) => element.move === move));
-    Gameboard.push({ player: player.name, move });
+  const makeMove = (player, move) => {
+    if (!Gameboard.some((element) => element.move === move)) {
+      Gameboard.push({ player: player.name, move });
+    }
   };
   const logGameboard = () => console.log(Gameboard);
   return { resetGameboard, logGameboard, playerTurn, makeMove, getGameboard };

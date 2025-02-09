@@ -42,3 +42,13 @@ h1 {
 .cell:hover {
   cursor: pointer;
 }
+
+.top-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.winner {
+  color: white;
+  
+}
